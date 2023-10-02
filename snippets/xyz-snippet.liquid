@@ -1,0 +1,17 @@
+<a class="card-link" href="{{ card_product.url }}">
+  <div class="card">
+    <div class="card-layout">
+      <img class="card-featured-image" src="{{ card_product.featured_image | img_url: '300x' }}" alt="{{ card_product.title }}">
+      <img class="card-second-image" src="{{ card_product.media[1] | img_url: '300x' }}" alt="{{ card_product.title }}">
+      <div class="card-info">
+          <a href="#" rel="nofollow" class="btn btn-dark btn-sm ms-2 quickshop--button" data-handle="{{ product.handle }}" title="{{ product.title }}" aria-label="" data-toggle="tooltip" data-trigger="hover" data-placement="top">
+              XXXXXX
+          </a>
+          <button onclick="openQuickShop({{ product.id }})">Quick View</button>
+          <a href="">-</a>
+      </div>
+      <h2>{{ card_product.title }}</h2>
+      <h4>{{ card_product.price | money_with_currency }}</h4>
+    </div>
+  </div>
+</a>

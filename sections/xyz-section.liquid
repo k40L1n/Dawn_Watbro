@@ -1,0 +1,263 @@
+
+
+
+<div class="tab-container">
+  <div class="tab-header">
+     {% if section.settings.collection_one != blank %}
+    <button class="tab-button active" data-tab="tab1">Tab 1</button>
+     {% endif %}
+
+     {% if section.settings.collection_two != blank %}
+    <button class="tab-button" data-tab="tab2">Tab 2</button>
+     {% endif %}
+     
+    {% if section.settings.collection_three != blank %}
+    <button class="tab-button" data-tab="tab3">Tab 3</button>
+    {% endif %}
+  </div>
+  <div class="tab-content" id="tab1">
+    <div class="tab-content--inner">
+        {%- for product in section.settings.collection_one.products -%}
+          {% render 'xyz-snippet', card_product: product  %}
+        {%- endfor -%}
+    </div>
+  </div>
+  <div class="tab-content" id="tab2">
+    <div class="tab-content--inner">
+        {%- for product in section.settings.collection_two.products -%}
+          {% render 'xyz-snippet', card_product: product  %}
+        {%- endfor -%}
+    </div>
+  </div>
+    <div class="tab-content" id="tab3">
+        <div class="tab-content--inner">
+        {%- for product in section.settings.collection_three.products -%}
+          {% render 'xyz-snippet', card_product: product  %}
+        {%- endfor -%}
+        </div>
+    </div>
+</div>
+
+<style>
+  /* Basic styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.tab-container {
+    margin: 0 auto;
+    padding: 20px;
+    max-width: 1200px;
+    overflow: auto;
+}
+.tab-container::-webkit-scrollbar {
+  width: 5px;
+}
+
+.tab-container::-webkit-scrollbar-thumb {
+  background-color: red;
+}
+
+.tab-button {
+    background-color: #f2f2f2;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: 0.2s ease-in-out all;
+    border-top: 2px solid #f2f2f2;
+    border-bottom: 2px solid #f2f2f2;
+}
+
+.tab-button.active {
+    border-top: 2px solid black;
+    border-bottom: 2px solid black;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.tab-content--inner {
+    display: flex;
+}
+.tab-content--inner .card{
+    margin: 0 10px;
+}
+
+.tab-content--inner .card .card-layout{
+    position: relative;
+}
+
+.tab-content--inner .card-info {
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.tab-content--inner .card-link{
+    display: block;
+    height: 100%;
+    width: 100%;
+}
+
+.tab-content--inner .card-second-image{
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.tab-content--inner .card .card-layout:hover > .card-info{
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.tab-content--inner .card .card-layout:hover .card-featured-image{
+    display: block;
+    animation: slide-out 0.3s ease-in-out alternate;
+    animation-fill-mode: none;
+    opacity: 0;
+}
+
+
+.tab-content--inner .card .card-layout:hover .card-second-image{
+    display: block;
+    animation: slide-in 0.3s ease-in-out alternate;
+    animation-fill-mode: none;
+}
+
+.tab-content--inner .card .card-layout .card-info{
+    height: 100%;   
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.4);     
+}
+
+@keyframes slide-in {
+    0%{
+      transform: translate(100%);
+    }
+    100% {
+      transform: translate(0);
+    }
+}
+
+@keyframes slide-out {
+    0%{
+      transform: translate(0%);
+    }
+    100% {
+      transform: translate(-100%);
+    }
+}
+
+</style>
+
+<script>
+  // Get all tab buttons and tab content elements
+const tabButtons = document.querySelectorAll('.tab-button');
+const tabContents = document.querySelectorAll('.tab-content');
+
+// Add click event listeners to tab buttons
+tabButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+        // Remove 'active' class from all tab buttons and tab contents
+        tabButtons.forEach((btn) => btn.classList.remove('active'));
+        tabContents.forEach((content) => content.classList.remove('active'));
+
+        // Add 'active' class to the clicked tab button
+        button.classList.add('active');
+
+        // Show the corresponding tab content
+        const tabId = button.getAttribute('data-tab');
+        const tabContent = document.getElementById(tabId);
+        tabContent.classList.add('active');
+    });
+});
+
+// Activate the first tab initially
+tabButtons[0].click();
+
+
+
+// quick-shop.js
+
+// Function to open the Quick Shop modal
+function openQuickShop(productId) {
+    // Use Shopify AJAX API to fetch product information by ID
+    Shopify.getProduct(productId, function(product) {
+        // Populate the Quick Shop modal with product data
+        document.getElementById('quick-shop').style.display = 'block';
+        // Update the content of the modal with product information
+        document.querySelector('#quick-shop .quick-shop-content h2').textContent = product.title;
+        document.querySelector('#quick-shop .quick-shop-content p').textContent = product.description;
+        document.querySelector('#quick-shop .quick-shop-content p:last-child').textContent = 'Price: ' + Shopify.formatMoney(product.price, "{{ shop.money_format }}");
+        // Add more product details as needed
+    });
+}
+
+// Function to close the Quick Shop modal
+function closeQuickShop() {
+    document.getElementById('quick-shop').style.display = 'none';
+}
+
+</script>
+
+
+{% schema %} 
+{ 
+   "name":"Tabify Collections",
+   "class": "section", 
+   "settings": [
+    {
+        "type":"text",
+        "id": "text-input-collection",
+        "label": "Enter your text"
+    },
+    {
+        "type":"collection",
+        "id": "collection_one",
+        "label":"Choose your first collection"
+    },
+    {
+        "type":"collection",
+        "id": "collection_two",
+        "label":"Choose your second collection"
+    },
+    {
+        "type":"collection",
+        "id": "collection_three",
+        "label":"Choose your third collection"
+    },
+    {
+      "type": "header",
+      "content": "Features"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show Vendor?",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_social_share",
+      "label": "Show Social Share?",
+      "default": true
+    }
+   ],
+   "presets": [
+    {
+      "name": "text-collections"
+    }
+  ]
+} 
+{% endschema %}
